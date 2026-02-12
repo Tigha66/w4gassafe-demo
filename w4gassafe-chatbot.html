@@ -326,6 +326,36 @@
         </div>
     </div>
 
+    <!-- Email Confirmation Preview Modal -->
+    <div id="email-preview-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass rounded-2xl p-6 max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-white">📧 Confirmation Email Sent</h2>
+                <button onclick="closeEmailPreview()" class="p-2 hover:bg-slate-700 rounded-lg">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4 mb-4">
+                <p class="text-slate-400 text-xs mb-2">To: <span id="preview-to" class="text-white"></span></p>
+                <p class="text-slate-400 text-xs mb-2">Subject: <span class="text-white">Booking Confirmation - W4 Gas Safe</span></p>
+                <div class="border-t border-slate-600 my-3 pt-3">
+                    <p class="text-white font-semibold mb-2">Dear <span id="preview-name"></span>,</p>
+                    <p class="text-slate-300 text-sm mb-2">Your booking has been confirmed!</p>
+                    <div class="bg-slate-800/50 rounded-lg p-3 my-3">
+                        <p class="text-white text-sm"><strong>Service:</strong> <span id="preview-service"></span></p>
+                        <p class="text-white text-sm"><strong>Date:</strong> <span id="preview-date"></span></p>
+                        <p class="text-white text-sm"><strong>Postcode:</strong> <span id="preview-postcode"></span></p>
+                        <p class="text-white text-sm"><strong>Phone:</strong> <span id="preview-phone"></span></p>
+                    </div>
+                    <p class="text-slate-300 text-sm">We'll call you within 15 minutes to confirm the details.</p>
+                </div>
+            </div>
+            <button onclick="closeEmailPreview()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl">✓ Got It</button>
+        </div>
+    </div>
+
     <!-- Services Modal -->
     <div id="services-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass rounded-2xl p-6 max-w-lg w-full">
@@ -417,8 +447,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold text-white mb-2">✅ Booking Received!</h2>
-            <p class="text-slate-400 mb-4">We'll call you within 15 minutes to confirm.</p>
+            <h2 class="text-2xl font-bold text-white mb-2">✅ Booking Confirmed!</h2>
+            <p class="text-slate-400 mb-4">📧 Confirmation sent to your email. We'll call you within 15 minutes.</p>
             <div class="bg-slate-800/50 rounded-xl p-4 text-left mb-4">
                 <p class="text-white text-sm">📅 <span id="confirm-date"></span></p>
                 <p class="text-white text-sm">📍 Postcode: <span id="confirm-postcode"></span></p>
@@ -548,18 +578,39 @@
             closeBooking();
             
             const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+            
+            // Show confirmation details
             document.getElementById('confirm-date').textContent = today;
             document.getElementById('confirm-postcode').textContent = data.postcode;
             document.getElementById('confirm-phone').textContent = data.phone;
             document.getElementById('confirm-email').textContent = data.email;
-            document.getElementById('success-modal').classList.remove('hidden');
+            
+            // Show email preview
+            const urgencyTexts = { emergency: 'ASAP / Today', tomorrow: 'Tomorrow', week: 'This Week', flexible: 'Flexible Date' };
+            document.getElementById('preview-to').textContent = data.email;
+            document.getElementById('preview-name').textContent = data.name;
+            document.getElementById('preview-service').textContent = document.getElementById('booking-issue').selectedOptions[0].text;
+            document.getElementById('preview-date').textContent = today + ' - ' + urgencyTexts[data.urgency];
+            document.getElementById('preview-postcode').textContent = data.postcode;
+            document.getElementById('preview-phone').textContent = data.phone;
+            
+            // Show email preview modal
+            setTimeout(() => {
+                document.getElementById('email-preview-modal').classList.remove('hidden');
+            }, 300);
             
             console.log('📱 NEW LEAD:', JSON.stringify(data));
-            // Add webhook here
+            console.log('📧 CONFIRMATION SENT TO:', data.email);
+            // Add webhook/API call here for actual email sending
         }
 
         function closeSuccess() {
             document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        function closeEmailPreview() {
+            document.getElementById('email-preview-modal').classList.add('hidden');
+            document.getElementById('success-modal').classList.remove('hidden');
         }
 
         function startVoiceCall() {
