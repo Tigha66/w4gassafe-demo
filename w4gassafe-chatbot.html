@@ -219,6 +219,10 @@
                         <input type="tel" id="booking-phone" required class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
                     </div>
                     <div>
+                        <label class="block text-sm text-slate-400 mb-1">Email Address</label>
+                        <input type="email" id="booking-email" required placeholder="your@email.com" class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+                    </div>
+                    <div>
                         <label class="block text-sm text-slate-400 mb-1">Postcode</label>
                         <input type="text" id="booking-postcode" required placeholder="e.g., W4, W3, SW6" class="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
                     </div>
@@ -345,6 +349,7 @@
                 <p class="text-white text-sm">📅 <span id="confirm-date"></span></p>
                 <p class="text-white text-sm">📍 Postcode: <span id="confirm-postcode"></span></p>
                 <p class="text-white text-sm">📱 We'll call: <span id="confirm-phone"></span></p>
+                <p class="text-white text-sm">📧 Email: <span id="confirm-email"></span></p>
             </div>
             <button onclick="closeSuccess()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-xl">Done</button>
         </div>
@@ -458,6 +463,7 @@
                 issue: document.getElementById('booking-issue').value,
                 name: document.getElementById('booking-name').value,
                 phone: document.getElementById('booking-phone').value,
+                email: document.getElementById('booking-email').value,
                 postcode: document.getElementById('booking-postcode').value,
                 urgency: selectedUrgency
             };
@@ -468,6 +474,7 @@
             document.getElementById('confirm-date').textContent = today;
             document.getElementById('confirm-postcode').textContent = data.postcode;
             document.getElementById('confirm-phone').textContent = data.phone;
+            document.getElementById('confirm-email').textContent = data.email;
             document.getElementById('success-modal').classList.remove('hidden');
             
             console.log('📱 NEW LEAD:', JSON.stringify(data));
