@@ -6,6 +6,13 @@
     <title>W4 Gas Safe - 24/7 Booking Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Replace with your EmailJS public key
+        })();
+    </script>
     <style>
         * { font-family: 'Inter', sans-serif; }
         .glass { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(59, 130, 246, 0.3); }
@@ -575,9 +582,8 @@
                 urgency: selectedUrgency
             };
             
-            closeBooking();
-            
             const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+            const urgencyTexts = { emergency: 'ASAP / Today', tomorrow: 'Tomorrow', week: 'This Week', flexible: 'Flexible Date' };
             
             // Show confirmation details
             document.getElementById('confirm-date').textContent = today;
@@ -586,7 +592,6 @@
             document.getElementById('confirm-email').textContent = data.email;
             
             // Show email preview
-            const urgencyTexts = { emergency: 'ASAP / Today', tomorrow: 'Tomorrow', week: 'This Week', flexible: 'Flexible Date' };
             document.getElementById('preview-to').textContent = data.email;
             document.getElementById('preview-name').textContent = data.name;
             document.getElementById('preview-service').textContent = document.getElementById('booking-issue').selectedOptions[0].text;
@@ -594,14 +599,33 @@
             document.getElementById('preview-postcode').textContent = data.postcode;
             document.getElementById('preview-phone').textContent = data.phone;
             
+            // Send confirmation email via EmailJS
+            const serviceIssue = document.getElementById('booking-issue').selectedOptions[0].text;
+            
+            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                to_email: data.email,
+                customer_name: data.name,
+                service: serviceIssue,
+                booking_date: today + ' - ' + urgencyTexts[data.urgency],
+                postcode: data.postcode,
+                phone: data.phone,
+                business_email: "info@w4gassafe.co.uk",
+                business_phone: "0208747 8794",
+                business_address: "Unit 104, The Light Box, 111 Power Road, W4 5PY"
+            }).then(function(response) {
+                console.log('✅ Email sent successfully:', response);
+            }, function(error) {
+                console.log('⚠️ Email send failed (showing preview instead):', error);
+            });
+            
+            closeBooking();
+            
             // Show email preview modal
             setTimeout(() => {
                 document.getElementById('email-preview-modal').classList.remove('hidden');
             }, 300);
             
             console.log('📱 NEW LEAD:', JSON.stringify(data));
-            console.log('📧 CONFIRMATION SENT TO:', data.email);
-            // Add webhook/API call here for actual email sending
         }
 
         function closeSuccess() {
