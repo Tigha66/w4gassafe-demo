@@ -10,7 +10,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Replace with your EmailJS public key
+            emailjs.init("cB_hSawYpdP7FRmgI"); // Replace with your EmailJS public key
         })();
     </script>
     <style>
@@ -602,7 +602,7 @@
             // Send confirmation email via EmailJS
             const serviceIssue = document.getElementById('booking-issue').selectedOptions[0].text;
             
-            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+            emailjs.send("service_52hylnd", "4ym4325", {
                 to_email: data.email,
                 customer_name: data.name,
                 service: serviceIssue,
